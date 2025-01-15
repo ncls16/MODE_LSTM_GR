@@ -1,0 +1,83 @@
+# Initialiser un dépôt local (si ce n'est pas encore fait)
+git init
+
+# Configurer les informations utilisateur (à faire une fois)
+git config --global user.name "Ton Nom"
+git config --global user.email "ton_email@example.com"
+
+# Cloner un dépôt distant existant
+git clone https://github.com/username/nom-du-projet.git
+cd nom-du-projet
+
+# Mettre à jour le projet avant de commencer
+git pull origin main
+
+# Vérifier les modifications locales
+git status
+
+# Ajouter des fichiers spécifiques ou tous les fichiers modifiés
+git add fichier1 fichier2
+# OU ajouter tous les fichiers modifiés
+git add .
+
+# Créer un commit pour enregistrer les modifications localement
+git commit -m "Description claire des modifications effectuées"
+
+# Envoyer les modifications au dépôt distant
+git push origin main
+
+# Mettre à jour le projet avant de continuer le travail
+git pull origin main
+
+# Commandes utiles pour suivre l'état du projet :
+# Voir l'historique des commits
+git log
+
+# Comparer les modifications locales non ajoutées
+git diff
+
+
+
+
+# Résoudre les conflits éventuels :
+# 1. Synchroniser avec le dépôt distant
+git pull origin main
+
+# 2. Si des conflits apparaissent :
+# - Identifier les fichiers en conflit via Git.
+# - Ouvrir les fichiers, repérer les délimitations `<<<<<<`, `======`, et `>>>>>>`.
+# - Résoudre manuellement les conflits.
+
+# 3. Marquer les conflits comme résolus
+git add fichier_conflit
+
+# 4. Finaliser la résolution
+git commit -m "Résolution des conflits"
+git push origin main
+
+# Bonnes pratiques collaboratives :
+# - Toujours synchroniser avant de commencer
+git pull origin main
+
+# - Faire des commits fréquents
+git add . && git commit -m "Description des étapes importantes"
+
+# - Utiliser des messages de commit clairs
+git commit -m "Description précise des modifications apportées"
+
+# Commandes utiles pour suivre l'état du projet :
+# Voir l'historique des commits
+git log
+
+# Comparer les modifications locales non ajoutées
+git diff
+
+# Annuler ou corriger des erreurs :
+# - Annuler une modification locale non ajoutée
+git checkout -- fichier
+
+# - Retirer un fichier ajouté avant le commit
+git reset fichier
+
+# - Annuler le dernier commit (si non poussé)
+git reset --soft HEAD~1

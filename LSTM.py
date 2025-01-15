@@ -17,7 +17,7 @@ from fonction import *
 
 
 
-class LTSM():
+class LSTM():
     def __init__(self,dir_proj, dir_results, file_BV, seq_len, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
         """
         Initialise la classe pour un seul bassin versant.
@@ -58,7 +58,7 @@ class LTSM():
         self.output_feat = ["flow_mm"]
         
         # enregistrment résultats
-        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_test", "MAE_test", "training_finished"]
+        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch"]
         self.dic_resultats = {col: None for col in colonnes_resultats}
     
     
@@ -197,26 +197,43 @@ class LTSM():
         start_time = time.time()
         
         for i_epoch in mypbar:
-            # training
+            # ------------------- training ---------------------
             train_loss   = train_epoch(self.mymodel, optimizer, self.train_Loader, loss_func, i_epoch+1, self.device)
             obs_, preds_ = eval_model(self.mymodel, self.train_Loader, self.device)
             train_loss_  = loss_func(obs_, preds_).item()
             
-            # enregistrer obs_t
+            # scores
+            MAE_train = MAE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            NSE_train = NSE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            self.dic_resultats['NSE_train'] = NSE_train
+            self.dic_resultats['MAE_train'] = MAE_train
             
-            # validation
+            
+            # -------------------- validation -------------------
             obs_, preds_ = eval_model(self.mymodel, self.val_Loader, self.device)
+
+            # scores
             val_mse      = np.mean((obs_.numpy().flatten() - preds_.numpy().flatten())**2)
-            val_mse_list.append(val_mse)
+            val_mse_list.append(val_mse)    
+                    
+            MAE_val = MAE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            NSE_val = NSE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            self.dic_resultats['NSE_val'] = NSE_val
+            self.dic_resultats['MAE_val'] = MAE_val
             
+           
             mypbar.set_description(f'Training loss: {train_loss_:.3f} | Validation MSE: {val_mse:.4f} | Counter: {early_stopper.counter} | Progress')
             
-            # early stopping
+            # -- early stopping -- 
             stop_ = early_stopper.early_stop(val_mse)
             if stop_:
                 if self.verbose == 1:   
                     print('Done! Early stop at epoch', i_epoch)
                 break
+            # epoch d'entrainement
+            self.dic_resultats['epoch'] = i_epoch
+            
+            
         if self.verbose == 1:
             print("--- %s minutes ---" % str(round((time.time() - start_time)/60,2)))
         
@@ -237,11 +254,11 @@ class LTSM():
 
 
         ## NSE in test + MAE (mm/d)
-        nse_t_lstm = NSE(obs_t, preds_lstm)
-        mae_t_lstm = MAE(obs_t, preds_lstm)
+        NSE_t_lstm = NSE(obs_t, preds_lstm)
+        MAE_t_lstm = MAE(obs_t, preds_lstm)
         
-        self.dic_resultats["NSE_test"] = nse_t_lstm
-        self.dic_resultats["MAE_test"] = mae_t_lstm
+        self.dic_resultats["NSE_test"] = NSE_t_lstm
+        self.dic_resultats["MAE_test"] = MAE_t_lstm
         
         
     def save_results(self, name):

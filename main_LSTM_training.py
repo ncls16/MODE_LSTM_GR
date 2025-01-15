@@ -13,7 +13,7 @@ import spotpy
 
 # import des fonctions dans les autres fichiers
 from fonction import *
-from LTSM import *
+from LSTM import *
 
 msg0 = '='*50
 msg1 = '-'*50
@@ -43,7 +43,7 @@ dir_results = os.path.normpath(os.path.join(dir_proj, f'resultats'))
 print('dir_results:', dir_results)
 
 # fichier où le résultat va être enregistré
-fichier_resultat = os.path.normpath(os.path.join(dir_results, f'resultats_LTSM_{nom}.csv'))
+fichier_resultat = os.path.normpath(os.path.join(dir_results, f'resultats_LSTM_{nom}.csv'))
 print('fichier_resultat:', fichier_resultat)
 
 #####################################################
@@ -87,13 +87,13 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
                 df.to_csv(fichier_resultat, index=False)
         
         
-        # Modèle LTSM
-        LTSM_model = LTSM(dir_proj=dir_proj, dir_results=dir_results, file_BV=file_BV, seq_len=seq_len, verbose=0)
-        LTSM_model.load_data()
-        LTSM_model.preprocess_data()
-        LTSM_model.split_data()
-        LTSM_model.standardization()
-        LTSM_model.train()
-        LTSM_model.test_model()
-        LTSM_model.save_results(name=nom)
+        # Modèle LSTM
+        LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, file_BV=file_BV, seq_len=seq_len, verbose=0)
+        LSTM_model.load_data()
+        LSTM_model.preprocess_data()
+        LSTM_model.split_data()
+        LSTM_model.standardization()
+        LSTM_model.train()
+        LSTM_model.test_model()
+        LSTM_model.save_results(name=nom)
 

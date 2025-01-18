@@ -58,7 +58,7 @@ class LSTM():
         self.output_feat = ["flow_mm"]
         
         # enregistrment résultats
-        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch"]
+        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","training_time"]
         self.dic_resultats = {col: None for col in colonnes_resultats}
     
     
@@ -140,6 +140,7 @@ class LSTM():
         self.x_test  = (self.x_test  - self.x_mean_r)/self.x_std_r
         
     def train(self, num_layers=1, hidden_size=128, batch_size=256, n_epochs=2000):
+        start_training_time = time.time()
         ## device: cpu or cuda_gpu if availabled
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         if self.verbose == 1:
@@ -237,7 +238,8 @@ class LSTM():
         if self.verbose == 1:
             print("--- %s minutes ---" % str(round((time.time() - start_time)/60,2)))
         
-        
+        end_training_time = time.time()
+        self.dic_resultats["training_time"] = end_training_time - start_training_time
         # si l'entrainement s'est bien passé
         self.dic_resultats["training_finished"] = True
         

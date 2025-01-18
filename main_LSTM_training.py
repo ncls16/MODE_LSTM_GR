@@ -69,12 +69,15 @@ print(msg1)
 #boucle d'entrainement
 for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
     for seq_len in list_seq_len :
-        df = pd.read_csv(fichier_resultat)
-        df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
+        
         nom_BV = file_BV.split('_')[0]
         
         # verification si (BV-seq_len) a déjà été avec succès
         if os.path.exists(fichier_resultat):
+            df = pd.read_csv(fichier_resultat)
+            df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
+            
+            
             df = pd.read_csv(fichier_resultat)
             
             if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == True)].empty:

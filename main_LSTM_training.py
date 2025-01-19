@@ -100,3 +100,7 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
         LSTM_model.test_model()
         LSTM_model.save_results(name=nom)
 
+if True :
+    df = pd.read_csv(fichier_resultat)
+    df.drop_duplicates()
+    df.to_csv(fichier_resultat, index=False)

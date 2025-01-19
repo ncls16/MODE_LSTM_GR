@@ -18,7 +18,7 @@ from fonction import *
 
 
 class LSTM():
-    def __init__(self,dir_proj, dir_results, file_BV, seq_len, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
+    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
         """
         Initialise la classe pour un seul bassin versant.
 
@@ -58,8 +58,10 @@ class LSTM():
         self.output_feat = ["flow_mm"]
         
         # enregistrment résultats
-        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","training_time"]
+        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","training_time","nom"]
         self.dic_resultats = {col: None for col in colonnes_resultats}
+        
+        self.dic_resultats["nom"] = nom
     
     
     def load_data(self):

@@ -91,7 +91,7 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
         
         
         # Modèle LSTM
-        LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, file_BV=file_BV, seq_len=seq_len, verbose=0)
+        LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
         LSTM_model.load_data()
         LSTM_model.preprocess_data()
         LSTM_model.split_data()

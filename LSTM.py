@@ -273,7 +273,7 @@ class LSTM():
             os.makedirs(self.dir_results)
         
         # fichier
-        result_file = os.path.join(self.dir_results, f"resultats_LTSM_{name}.csv")
+        result_file = os.path.join(self.dir_results, f"resultats_LSTM_{name}.csv")
         nom_BV = self.file_BV.split("_")[0]
         self.dic_resultats["BV"] = nom_BV
         

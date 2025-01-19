@@ -32,7 +32,7 @@ print('list_seq_len:', list_seq_len)
 
 ## getting the data repo and the list of files
 dir_proj = os.path.normpath(os.getcwd())
-print('dir_proj:', dir_proj) # si pas le bon, modifier avec : dir_proj = ...
+print('dir_proj:', dir_proj) 
 
 # fichier dir_data qui contient les données
 dir_data = os.path.normpath(os.path.join(dir_proj, f'data_{nom}'))
@@ -68,7 +68,7 @@ print(msg1)
 
 #boucle d'entrainement
 for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
-    for seq_len in list_seq_len :
+    for seq_len in tqdm(list_seq_len, desc='seq_len') :
         
         nom_BV = file_BV.split('_')[0]
         

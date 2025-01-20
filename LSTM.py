@@ -18,7 +18,7 @@ from fonction import *
 
 
 class LSTM():
-    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
+    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, fonction_cout, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
         """
         Initialise la classe pour un seul bassin versant.
 
@@ -46,6 +46,7 @@ class LSTM():
         self.val_p          = val_p
         self.test_p         = test_p
         self.verbose        = verbose
+        self.fonction_cout  = fonction_cout
         
         # initialisation
         self.data_cat       = None
@@ -175,8 +176,16 @@ class LSTM():
                                         dropout_rate = dropout, nblayers = num_layers).to(self.device)
         
         #loss_func = nn.MSELoss()
-        loss_func = loss_NSE()
-        optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = True)
+        if self.fonction_cout == 'NSE':
+            loss_func = loss_NSE()
+            maximize = True
+        
+        elif self.fonction_cout == 'MAE':
+            loss_func = loss_MAE()
+            maximize = False
+        
+        
+        optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = maximize)
 
         ## get an idea about the number of parameters in the model and their shapes
         (wi, wh, bi, bh) = self.mymodel.lstm.parameters()

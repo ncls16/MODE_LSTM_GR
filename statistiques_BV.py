@@ -26,8 +26,8 @@ code = [file[0:8] for file in ts_files]
 ## create a statistic dataframe
 df_stats = pd.DataFrame( index = range(len(ts_files)),
                          columns = [ "BV",
-                                     "mean_precipitation", "min_precipitation", "max_precipitation",
-                                     "mean_evapotranspiration", "min_evapotranspiration", "max_evapotranspiration",
+                                     "mean_precip", "min_precip", "max_precip",
+                                     "mean_ETP", "min_ETP", "max_ETP",
                                      "mean_flow_mm", "min_flow_mm", "max_flow_mm"])
 
 ## choose one catchment

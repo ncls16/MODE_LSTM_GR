@@ -18,7 +18,7 @@ from fonction import *
 
 
 class LSTM():
-    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
+    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, loss_fonction, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
         """
         Initialise la classe pour un seul bassin versant.
 
@@ -46,6 +46,7 @@ class LSTM():
         self.val_p          = val_p
         self.test_p         = test_p
         self.verbose        = verbose
+        self.loss_fonction  = loss_fonction
         
         # initialisation
         self.data_cat       = None
@@ -58,7 +59,7 @@ class LSTM():
         self.output_feat = ["flow_mm"]
         
         # enregistrment résultats
-        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","training_time","nom"]
+        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","loss_fonction","training_time","nom"]
         self.dic_resultats = {col: None for col in colonnes_resultats}
         
         self.dic_resultats["nom"] = nom
@@ -175,8 +176,18 @@ class LSTM():
                                         dropout_rate = dropout, nblayers = num_layers).to(self.device)
         
         #loss_func = nn.MSELoss()
-        loss_func = loss_NSE()
-        optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = True)
+        if self.loss_fonction == 'NSE':
+            loss_func = loss_NSE()
+            maximize = True
+        
+        elif self.loss_fonction == 'MAE':
+            loss_func = loss_MAE()
+            maximize = False
+            
+        self.dic_resultats['loss_fonction'] = self.loss_fonction
+        
+        
+        optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = maximize)
 
         ## get an idea about the number of parameters in the model and their shapes
         (wi, wh, bi, bh) = self.mymodel.lstm.parameters()

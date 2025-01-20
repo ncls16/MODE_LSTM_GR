@@ -18,7 +18,7 @@ from fonction import *
 
 
 class LSTM():
-    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, fonction_cout, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
+    def __init__(self,dir_proj, dir_results, file_BV, nom, seq_len, loss_fonction, tr_p=0.5, val_p=0.2, test_p=0.3, verbose=0):
         """
         Initialise la classe pour un seul bassin versant.
 
@@ -46,7 +46,7 @@ class LSTM():
         self.val_p          = val_p
         self.test_p         = test_p
         self.verbose        = verbose
-        self.fonction_cout  = fonction_cout
+        self.loss_fonction  = loss_fonction
         
         # initialisation
         self.data_cat       = None
@@ -176,15 +176,15 @@ class LSTM():
                                         dropout_rate = dropout, nblayers = num_layers).to(self.device)
         
         #loss_func = nn.MSELoss()
-        if self.fonction_cout == 'NSE':
+        if self.loss_fonction == 'NSE':
             loss_func = loss_NSE()
             maximize = True
         
-        elif self.fonction_cout == 'MAE':
+        elif self.loss_fonction == 'MAE':
             loss_func = loss_MAE()
             maximize = False
             
-        self.dic_resultats['loss_fonction'] = self.fonction_cout
+        self.dic_resultats['loss_fonction'] = self.loss_fonction
         
         
         optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = maximize)

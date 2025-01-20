@@ -28,7 +28,7 @@ nom = 'Loic' # Fabio, Emma, Nicolas, Loic
 # pour chaque BV, les "seq_len" suivants seront entrainés 
 #(une ligne par combinaison BV-seq_len sur fichier sortie)
 list_seq_len = [7, 15, 30]
-fonctions_cout = ['MAE', 'NSE']
+loss_fonctions = ['MAE', 'NSE']
 
 
 print('list_seq_len:', list_seq_len)
@@ -73,7 +73,7 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
     
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
         
-        for fonction_cout in fonctions_cout :
+        for loss_fonction in loss_fonctions :
         
             nom_BV = file_BV.split('_')[0]
             
@@ -83,18 +83,18 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
                 df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
                 
                 
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == True)].empty:
+                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
                     print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
                     continue
                 
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == False)].empty:
+                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
                     # retirer la ligne si le training n'a pas été un succès
                     df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
                     df.to_csv(fichier_resultat, index=False)
             
             
             # Modèle LSTM
-            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout='', file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
+            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout=loss_fonction, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
             LSTM_model.load_data()
             LSTM_model.preprocess_data()
             LSTM_model.split_data()

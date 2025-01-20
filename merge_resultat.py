@@ -50,13 +50,18 @@ print('df_result.shape : ',df_result.shape)
 
 # -----------------------Comparaison du temps de calcul---------------------
 noms = df_result['nom_LSTM'].unique()
+print('df_result.columns : ',df_result.columns)
 print('noms = ',noms)
 
+#df_result['training_time_LSTM'].groupby('nom_LSTM').mean()
+mean_training_times = df_result['training_time_LSTM'].groupby(df_result['nom_LSTM']).mean()
+min_training_time_name = mean_training_times.idxmin() #personne qui a la moyenne d'entrainement la plus faible
 
+# Ajouter une colonne avec la moyenne du temps d'entraînement pour chaque ligne
+df_result['mean_training_time_LSTM'] = df_result['training_time_LSTM'].groupby(df_result['nom_LSTM']).transform('mean')
 
-
-
-
+# Normaliser le temps d'entraînement
+df_result['training_time_norm_LSTM'] = df_result['training_time_LSTM'] * df_result['mean_training_time_LSTM'] / mean_training_times[min_training_time_name]
 
 
 

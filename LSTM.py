@@ -59,7 +59,7 @@ class LSTM():
         self.output_feat = ["flow_mm"]
         
         # enregistrment résultats
-        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","training_time","nom"]
+        colonnes_resultats = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","loss_fonction","training_time","nom"]
         self.dic_resultats = {col: None for col in colonnes_resultats}
         
         self.dic_resultats["nom"] = nom
@@ -183,6 +183,8 @@ class LSTM():
         elif self.fonction_cout == 'MAE':
             loss_func = loss_MAE()
             maximize = False
+            
+        self.dic_resultats['loss_fonction'] = self.fonction_cout
         
         
         optimizer = torch.optim.Adam(self.mymodel.parameters(), lr = lr, maximize = maximize)

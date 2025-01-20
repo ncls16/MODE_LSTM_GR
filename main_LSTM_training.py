@@ -68,41 +68,43 @@ print(msg1)
 
 
 
-
 #boucle d'entrainement
 for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
+    
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
         
-        nom_BV = file_BV.split('_')[0]
+        for fonction_cout in fonctions_cout :
         
-        # verification si (BV-seq_len) a déjà été avec succès
-        if os.path.exists(fichier_resultat):
-            df = pd.read_csv(fichier_resultat)
-            df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
+            nom_BV = file_BV.split('_')[0]
+            
+            # verification si (BV-seq_len) a déjà été avec succès
+            if os.path.exists(fichier_resultat):
+                df = pd.read_csv(fichier_resultat)
+                df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
+                
+                
+                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == True)].empty:
+                    print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
+                    continue
+                
+                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == False)].empty:
+                    # retirer la ligne si le training n'a pas été un succès
+                    df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
+                    df.to_csv(fichier_resultat, index=False)
             
             
-            df = pd.read_csv(fichier_resultat)
-            
-            if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == True)].empty:
-                print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
-                continue
-            
-            if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['training_finished'] == False)].empty:
-                # retirer la ligne si le training n'a pas été un succès
-                df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
-                df.to_csv(fichier_resultat, index=False)
-        
-        
-        # Modèle LSTM
-        LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout='', file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
-        LSTM_model.load_data()
-        LSTM_model.preprocess_data()
-        LSTM_model.split_data()
-        LSTM_model.standardization()
-        LSTM_model.train()
-        LSTM_model.test_model()
-        LSTM_model.save_results(name=nom)
+            # Modèle LSTM
+            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout='', file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
+            LSTM_model.load_data()
+            LSTM_model.preprocess_data()
+            LSTM_model.split_data()
+            LSTM_model.standardization()
+            LSTM_model.train()
+            LSTM_model.test_model()
+            LSTM_model.save_results(name=nom)
 
+
+# en cas de lignes doubles, ne pas les garder
 if True :
     df = pd.read_csv(fichier_resultat)
     df.drop_duplicates(subset=['seq_len', 'BV'], inplace=True)

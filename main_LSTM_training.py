@@ -102,5 +102,5 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
 
 if True :
     df = pd.read_csv(fichier_resultat)
-    df.drop_duplicates()
+    df.drop_duplicates(subset=['seq_len', 'BV'], inplace=True)
     df.to_csv(fichier_resultat, index=False)

@@ -48,7 +48,7 @@ df_result = pd.merge(df_result, df_stat, how = 'left', left_on='BV_LSTM', right_
 print('df_result.shape : ',df_result.shape)
 
 
-# -----------------------Comparaison du temps de calcul---------------------
+# -----------------------Normalisation du temps de calcul---------------------
 noms = df_result['nom_LSTM'].unique()
 print('df_result.columns : ',df_result.columns)
 print('noms = ',noms)

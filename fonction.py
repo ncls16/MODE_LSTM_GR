@@ -347,16 +347,16 @@ class loss_NSE(nn.Module):
         sum_vars = torch.sum( (obs - obs_m)**2 )
         return 1.-sum_errors/sum_vars
     
-class loss_MAE(nn.module) :
+class loss_MAE(nn.Module) :
     def __init__(self):
         super().__init__()  
     def forward(self, output, target):
         obs = target
         preds = output
         
-        sum_errors = torch.sum( np.abs((obs - preds)))
+        sum_errors = torch.sum( torch.abs((obs - preds)))
         
-        return np.mean(sum_errors)
+        return torch.mean(sum_errors)
     
     
 ## for GR4J

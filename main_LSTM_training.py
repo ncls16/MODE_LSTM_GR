@@ -74,7 +74,7 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
         
         for loss_fonction in loss_fonctions :
-        
+            
             nom_BV = file_BV.split('_')[0]
             
             # verification si (BV-seq_len) a déjà été avec succès
@@ -82,19 +82,21 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
                 df = pd.read_csv(fichier_resultat)
                 df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
                 
-                
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
-                    print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
-                    continue
-                
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
-                    # retirer la ligne si le training n'a pas été un succès
-                    df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
-                    df.to_csv(fichier_resultat, index=False)
+                try :
+                    if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
+                        print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
+                        continue
+                    
+                    if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
+                        # retirer la ligne si le training n'a pas été un succès
+                        df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
+                        df.to_csv(fichier_resultat, index=False)
+                except :
+                    pass
             
             
             # Modèle LSTM
-            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout=loss_fonction, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
+            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, loss_fonction=loss_fonction, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
             LSTM_model.load_data()
             LSTM_model.preprocess_data()
             LSTM_model.split_data()

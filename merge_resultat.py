@@ -25,13 +25,20 @@ result = pd.merge(df_resultats, df_GR4J, how = 'left', left_on='BV_LSTM', right_
 result = pd.merge(result, df_stat, how = 'left', left_on='BV_LSTM', right_on='BV')
 print(result)
 
-# BEST
-# code_BV = result['BV_LSTM'].unique()
-# print(result.columns)
-# for code in code_BV:
-#     print(result[ ['BV_LSTM'] == code, ['seq_len'] == '7']['MAE_val_LSTM'])
+# Best MAE and NSE in fucntion of seq_len
+code_BV = result['BV_LSTM'].unique()
+for code in code_BV:
+    MAE = result.loc[result['BV_LSTM'] == code,['seq_len_LSTM', 'MAE_val_LSTM']] 
+    MAE_max_seq_len = MAE.loc[MAE['MAE_val_LSTM'].idxmax(), 'seq_len_LSTM']
+    result.loc[(result['BV_LSTM'] == code) & (result['seq_len_LSTM'] == MAE_max_seq_len),'best_MAE_val_LSTM'] = True
 
-# result['best'] = result['NSE_LSTM'] > result['NSE_GR4J']
+    NSE = result.loc[result['BV_LSTM'] == code,['seq_len_LSTM', 'NSE_val_LSTM']]
+    NSE_max_seq_LSTM = NSE.loc[NSE['NSE_val_LSTM'].idxmax(), 'seq_len_LSTM']
+    result.loc[(result['BV_LSTM'] == code) & (result['seq_len_LSTM'] == NSE_max_seq_LSTM),'best_NSE_val_LSTM'] = True
+
+result['best_MAE_val_LSTM'] = result['best_MAE_val_LSTM'].fillna(False)
+result['best_NSE_val_LSTM'] = result['best_NSE_val_LSTM'].fillna(False)
+
 # Sauvegarder le résultat dans un nouveau fichier CSV
-# result.to_csv(dir_resultats + "resultats.csv", index=False)
-# print("Le fichier 'resultats.csv' a été généré avec succès.")
+result.to_csv(dir_results + "resultats.csv", index=False)
+print("Le fichier 'resultats.csv' a été généré avec succès.")

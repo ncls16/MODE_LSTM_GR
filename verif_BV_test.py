@@ -78,9 +78,9 @@ LSTM_model.train()
 LSTM_model.test_model()
 LSTM_model.save_results(name=nom)
 
-#reproduire ce print : #LSTM - NSE: 0.544, MAE (mm/d): 0.381
+#reproduire ce print : #LSTM - NSE: 0.452, MAE (mm/d): 0.427
 print('LSTM')
-print(f'résultat voulu : NSE: 0.544, MAE (mm/d): 0.381')
+print(f'résultat voulu en test: NSE: 0.452, MAE (mm/d): 0.427')
 print(f'résultat obtenu : NSE: ')
 
 print('BV	seq_len	ti_train	tf_train	ti_test	    tf_test	    NSE_train	MAE_train	NSE_val	    MAE_val	    NSE_test	MAE_test	training_finished	epoch	loss_func   training_time	    nom')
@@ -116,5 +116,6 @@ df_GR4J = gr4j_model.save_results()
 # reproduire ce print : GR4J - NSE: 0.883, MAE (mm/d): 0.244
 print('résultat voulu : NSE: 0.883, MAE (mm/d): 0.244')
 print(f'GR4J - NSE: {df_GR4J.loc[0, "NSE_test"]}, MAE (mm/d): {df_GR4J.loc[0, "MAE_test"]}')
+# obtenu : GR4J - NSE: 0.8282378839052247, MAE (mm/d): 0.2087258551241016
 
 

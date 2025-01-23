@@ -69,8 +69,9 @@ print(msg1)
 
 
 #boucle d'entrainement
-for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
-    print(f"\nTraitement de {file_BV} : ")
+#Zfor file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
+for i, file_BV in enumerate(ts_files) :
+    print(f"\nTraitement de {file_BV} : {i/len(ts_files)*100:.2f}%")
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
         print(f"seq_len : {seq_len}")
         for loss_fonction in loss_fonctions :

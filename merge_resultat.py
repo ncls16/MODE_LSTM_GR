@@ -2,7 +2,8 @@ import pandas as pd
 import os
 import numpy as np
 
-
+# silence la deprecation warning (.fill* sont dépréciés)
+pd.set_option('future.no_silent_downcasting', True)
 ####################################################
 # --------------- Entrées (modififiable) -----------
 dir_proj = os.path.normpath(os.getcwd()) 
@@ -95,5 +96,5 @@ df_result['best_MAE_val_LSTM'] = df_result['best_MAE_val_LSTM'].fillna(False)
 df_result['best_NSE_val_LSTM'] = df_result['best_NSE_val_LSTM'].fillna(False)
 
 # Sauvegarder le résultat dans un nouveau fichier CSV
-df_result.to_csv(os.join.path(dir_results,"resultats_merged.csv"), index=False)
+df_result.to_csv(os.path.join(dir_results,"resultats_merged.csv"), index=False)
 print("Le fichier 'resultats.csv' a été généré avec succès.")

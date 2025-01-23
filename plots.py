@@ -313,6 +313,5 @@ plot_neige(df)
 plot_urbanisation(df)
 plot_performance(df)
 plot_3D(df)
-# plot_histogram(df)
 
 # %% Fin

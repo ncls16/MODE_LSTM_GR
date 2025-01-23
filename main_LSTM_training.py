@@ -70,11 +70,11 @@ print(msg1)
 
 #boucle d'entrainement
 for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
-    
+    print(f"\nTraitement de {file_BV} : ")
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
-        
+        print(f"seq_len : {seq_len}")
         for loss_fonction in loss_fonctions :
-            
+            print(f"loss_fonction : {loss_fonction}")
             nom_BV = file_BV.split('_')[0]
             
             # verification si (BV-seq_len) a déjà été avec succès
@@ -84,7 +84,7 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
                 
                 try :
                     if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
-                        print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
+                        print(f"BV {nom_BV} avec seq_len {seq_len} et {loss_fonction} déjà traité")
                         continue
                     
                     if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
@@ -109,5 +109,5 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
 # en cas de lignes doubles, ne pas les garder
 if True :
     df = pd.read_csv(fichier_resultat)
-    df.drop_duplicates(subset=['seq_len', 'BV'], inplace=True)
+    df.drop_duplicates(subset=['seq_len', 'BV', 'loss_fonction'], inplace=True)
     df.to_csv(fichier_resultat, index=False)

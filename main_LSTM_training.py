@@ -27,7 +27,7 @@ nom = 'Loic' # Fabio, Emma, Nicolas, Loic
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 
 #(une ligne par combinaison BV-seq_len sur fichier sortie)
-list_seq_len = [7, 15, 30]
+list_seq_len = [90] # [7, 15, 30]
 loss_fonctions = ['MAE', 'NSE']
 
 
@@ -71,10 +71,12 @@ print(msg1)
 #boucle d'entrainement
 #Zfor file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
 for i, file_BV in enumerate(ts_files) :
-    print(f"\nTraitement de {file_BV} : {i/len(ts_files)*100:.2f}%")
+    print(msg1)
+    print(f"Traitement de {file_BV} : {i}/{len(ts_files)} = {i/len(ts_files)*100:.2f}%")
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
         print(f"seq_len : {seq_len}")
         for loss_fonction in loss_fonctions :
+            t1 = time.time()
             print(f"loss_fonction : {loss_fonction}")
             nom_BV = file_BV.split('_')[0]
             
@@ -106,7 +108,9 @@ for i, file_BV in enumerate(ts_files) :
             LSTM_model.test_model()
             LSTM_model.save_results(name=nom)
 
-
+            t2 = time.time()
+            print(f"Temps d'entrainement : {t2-t1:.2f} s")
+            
 # en cas de lignes doubles, ne pas les garder
 if True :
     df = pd.read_csv(fichier_resultat)

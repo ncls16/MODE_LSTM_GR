@@ -27,8 +27,8 @@ nom = 'Nicolas' # Fabio, Emma, Nicolas, Loic
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 
 #(une ligne par combinaison BV-seq_len sur fichier sortie)
-list_seq_len = [7, 15, 30]
-loss_fonctions = ['NSE']
+list_seq_len = [7, 15, 30, 90]
+loss_fonctions = ['NSE', 'MAE']
 
 
 print('list_seq_len:', list_seq_len)

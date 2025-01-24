@@ -14,7 +14,7 @@ dir_results = os.path.normpath(os.path.join(dir_proj, f'resultats'))
 print('dir_results:', dir_results)
 
 # fichier total
-fichier_resultat = os.path.normpath(os.path.join(dir_results, f'resultats_totaux.csv'))
+fichier_resultat = os.path.normpath(os.path.join(dir_results, f'resultats_merged.csv'))
 if not os.path.exists(fichier_resultat):
     print(f'Le fichier {fichier_resultat} n\'existe pas')
 
@@ -35,32 +35,32 @@ def csv_df(file: str) -> pd.DataFrame:
 # %%% seq_len
 def plot_moustaches(df):
     """Plot la distribution des MAE et NSE"""
-    seq_len = df['seq_len'].unique()
+    seq_len = df['seq_len_LSTM'].unique()
 
-    timed = plt.figure(figsize=fig_size)
-    timed.title('Distribution des temps de calcul')
-    timed.ylabel('Temps de calcul (s)')
-    timed.boxplot(df.loc[df['best_MAE'] == True, 'training_time_GR4J'], labels=['GR4J'])
-    timed.boxplot(df.loc[df['best_MAE'] == True, 'training_time_LSTM'], labels=['LSTM_best_MAE'])
-    timed.boxplot(df.loc[df['best_NSE'] == True, 'training_time_LSTM'], labels=['LSTM_best_NSE'])
-    timed.yscale('log')
+    timed, ax = plt.subplots(figsize=(10, 6))  # Créez une figure et des axes
+    timed.suptitle('Distribution des temps de calcul')  # Utilisez suptitle pour ajouter un titre à la figure
+    ax.set_ylabel('Temps de calcul (s)')  # Utilisez set_ylabel pour définir l'étiquette de l'axe y
+    ax.boxplot(df.loc[df['best_MAE'] == True, 'training_time_GR4J'], labels=['GR4J'])
+    ax.boxplot(df.loc[df['best_MAE'] == True, 'training_time_LSTM'], labels=['LSTM_best_MAE'])
+    ax.boxplot(df.loc[df['best_NSE'] == True, 'training_time_LSTM'], labels=['LSTM_best_NSE'])
+    ax.set_yscale('log')  # Utilisez set_yscale pour définir l'échelle de l'axe y
 
-    mae = plt.figure(figsize=fig_size)
-    mae.title(f'Distribution des MAE pour différents seq_len')
-    mae.ylabel('MAE')
-    mae.boxplot(df.loc[df['best_MAE'] == True, 'MAE_test_GR4J'], labels=['GR4J'])
-    mae.boxplot(df.loc[df['best_MAE'] == True, 'MAE_test_LSTM'], labels=['LSTM_best_MAE'])
+    mae, ax1 = plt.figure(figsize=fig_size)
+    mae.suptitle(f'Distribution des MAE pour différents seq_len')
+    ax1.set_ylabel('MAE')
+    ax1.boxplot(df.loc[df['best_MAE'] == True, 'MAE_test_GR4J'], labels=['GR4J'])
+    ax1.boxplot(df.loc[df['best_MAE'] == True, 'MAE_test_LSTM'], labels=['LSTM_best_MAE'])
 
-    nse = plt.figure(figsize=fig_size)
-    nse.title(f'Distribution des NSE pour différents seq_len')
-    nse.ylabel('NSE')
-    nse.boxplot(df.loc[df['best_NSE'] == True, 'NSE_test_GR4J'], labels=['GR4J'], showfliers=False)
-    nse.boxplot(df.loc[df['best_NSE'] == True, 'NSE_test_LSTM'], labels=['LSTM_best_NSE'], showfliers=False)
+    nse, ax2 = plt.figure(figsize=fig_size)
+    nse.suptitle(f'Distribution des NSE pour différents seq_len')
+    ax2.set_ylabel('NSE')
+    ax2.boxplot(df.loc[df['best_NSE'] == True, 'NSE_test_GR4J'], labels=['GR4J'], showfliers=False)
+    ax2.boxplot(df.loc[df['best_NSE'] == True, 'NSE_test_LSTM'], labels=['LSTM_best_NSE'], showfliers=False)
 
     for sl in seq_len:
-        timed.boxplot(df.loc[df['seq_len'] == sl, 'training_time'], labels=[f'LSTM_{sl}'])
-        mae.boxplot(df.loc[df['seq_len'] == sl, 'MAE_test_LSTM'], labels=[f'LSTM_MAE_{sl}'])
-        nse.boxplot(df.loc[df['seq_len'] == sl, 'NSE_test_LSTM'], labels=[f'LSTM_NSE_{sl}'])
+        ax.boxplot(df.loc[df['seq_len'] == sl, 'training_time'], labels=[f'LSTM_{sl}'])
+        ax1.boxplot(df.loc[df['seq_len'] == sl, 'MAE_test_LSTM'], labels=[f'LSTM_MAE_{sl}'])
+        ax2.boxplot(df.loc[df['seq_len'] == sl, 'NSE_test_LSTM'], labels=[f'LSTM_NSE_{sl}'])
 
     timed.savefig(os.path.join(dir_plots, 'boxplot_time.png'))
     mae.savefig(os.path.join(dir_plots, 'boxplot_MAE.png'))

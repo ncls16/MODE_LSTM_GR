@@ -22,13 +22,13 @@ print(msg0)
 ####################################################
 # --------------- Entrées (modififiable) -----------
 
-nom = 'Loic' # Fabio, Emma, Nicolas, Loic
+nom = 'Nicolas' # Fabio, Emma, Nicolas, Loic
 
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 
 #(une ligne par combinaison BV-seq_len sur fichier sortie)
-list_seq_len = [7, 15, 30]
-loss_fonctions = ['MAE', 'NSE']
+list_seq_len = [7, 15, 30, 90]
+loss_fonctions = ['NSE', 'MAE']
 
 
 print('list_seq_len:', list_seq_len)
@@ -52,7 +52,7 @@ print('fichier_resultat:', fichier_resultat)
 #####################################################
 print(msg0)
 
-
+time_init = time.time()
 print('Début du traitement à :', time.ctime())
 
 
@@ -69,12 +69,15 @@ print(msg1)
 
 
 #boucle d'entrainement
-for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
-    
+#Zfor file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} {elapsed}<{remaining} {rate_fmt}') :
+for i, file_BV in enumerate(ts_files) :
+    print(msg1)
+    print(f"Traitement de {file_BV} : {i}/{len(ts_files)} = {i/len(ts_files)*100:.2f}%")
     for seq_len in tqdm(list_seq_len, desc='seq_len') :
-        
+        print(f"seq_len : {seq_len}")
         for loss_fonction in loss_fonctions :
-        
+            t1 = time.time()
+            print(f"loss_fonction : {loss_fonction}")
             nom_BV = file_BV.split('_')[0]
             
             # verification si (BV-seq_len) a déjà été avec succès
@@ -82,19 +85,21 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
                 df = pd.read_csv(fichier_resultat)
                 df['training_finished'] = df['training_finished'].astype(bool)# Vérifier si la combinaison BV-seq_len est déjà traitée
                 
-                
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
-                    print(f"BV {nom_BV} avec seq_len {seq_len} déjà traité")
-                    continue
-                
-                if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
-                    # retirer la ligne si le training n'a pas été un succès
-                    df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
-                    df.to_csv(fichier_resultat, index=False)
+                try :
+                    if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == True)].empty:
+                        print(f"BV {nom_BV} avec seq_len {seq_len} et {loss_fonction} déjà traité")
+                        continue
+                    
+                    if not df[(df['BV'] == nom_BV) & (df['seq_len'] == seq_len) & (df['loss_fonction'] == loss_fonction) & (df['training_finished'] == False)].empty:
+                        # retirer la ligne si le training n'a pas été un succès
+                        df = df[~((df['BV'] == nom_BV) & (df['seq_len'] == seq_len))] 
+                        df.to_csv(fichier_resultat, index=False)
+                except :
+                    pass
             
             
             # Modèle LSTM
-            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, fonction_cout=loss_fonction, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
+            LSTM_model = LSTM(dir_proj=dir_proj, dir_results=dir_results, loss_fonction=loss_fonction, file_BV=file_BV, seq_len=seq_len, nom=nom, verbose=0)
             LSTM_model.load_data()
             LSTM_model.preprocess_data()
             LSTM_model.split_data()
@@ -103,9 +108,14 @@ for file_BV in tqdm(ts_files, desc='BV', ncols=100,ascii=True, bar_format='{l_ba
             LSTM_model.test_model()
             LSTM_model.save_results(name=nom)
 
-
+            t2 = time.time()
+            print(f"Temps d'entrainement : {t2-t1:.2f} s")
+            
 # en cas de lignes doubles, ne pas les garder
 if True :
     df = pd.read_csv(fichier_resultat)
-    df.drop_duplicates(subset=['seq_len', 'BV'], inplace=True)
+    df.drop_duplicates(subset=['seq_len', 'BV', 'loss_fonction'], inplace=True)
     df.to_csv(fichier_resultat, index=False)
+
+time_end = time.time()
+print("duration in HMS format : ", time.strftime("%H:%M:%S", time.gmtime(time_end - time_init)))

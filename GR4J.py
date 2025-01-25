@@ -218,6 +218,9 @@ class GR4JModel:
         
         if self.verbose == 1:
             print(f"Results saved to {result_file}")
+            
+        df = pd.read_csv(result_file)
+        return df
 
 
 

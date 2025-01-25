@@ -299,6 +299,9 @@ class LSTM():
         
         if self.verbose == 1:
             print(f"Results saved to {result_file}")
+            
+        # df = pd.read_csv(result_file, error_bad_lines=False)
+        # return df
         
         
         

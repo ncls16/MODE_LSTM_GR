@@ -66,15 +66,20 @@ df_result_ref = df_result[df_result['BV_LSTM'].isin(liste_BV_reference)]
 
 #df_result['training_time_LSTM'].groupby('nom_LSTM').mean()
 mean_training_times_ref = df_result_ref.groupby('nom_LSTM')['training_time_LSTM'].mean()
-min_training_time_name = mean_training_times_ref.idxmin() #personne qui a la moyenne d'entrainement la plus faible
-min_training_time_value = mean_training_times_ref.min()
+mean_time_per_epochs_ref = df_result_ref.groupby('nom_LSTM').apply(lambda x: (x['training_time_LSTM'] / x['epoch_LSTM']).mean())
+# min_training_time_name = mean_training_times_ref.idxmin() #personne qui a la moyenne d'entrainement la plus faible
+# min_training_time_value = mean_training_times_ref.min()
+min_time_per_epoch_value = mean_time_per_epochs_ref.min() #moyenne temps pas epoch la plus faible
 
 
 # Normaliser le temps d'entraînement par rapport à la personne qui a la moyenne la plus faible
+# df_result['training_time_norm_LSTM'] = (
+#     df_result['training_time_LSTM'] *
+#     min_training_time_value / 
+#     df_result['nom_LSTM'].map(mean_training_times_ref)
+# )
 df_result['training_time_norm_LSTM'] = (
-    df_result['training_time_LSTM'] *
-    min_training_time_value / 
-    df_result['nom_LSTM'].map(mean_training_times_ref)
+    df_result['epoch_LSTM'] * min_time_per_epoch_value
 )
 
 
@@ -95,5 +100,5 @@ df_result['best_MAE_val_LSTM'] = df_result['best_MAE_val_LSTM'].fillna(False)
 df_result['best_NSE_val_LSTM'] = df_result['best_NSE_val_LSTM'].fillna(False)
 
 # Sauvegarder le résultat dans un nouveau fichier CSV
-df_result.to_csv(os.join.path(dir_results,"resultats_merged.csv"), index=False)
+df_result.to_csv(os.path.join(dir_results,"resultats_merged.csv"), index=False)
 print("Le fichier 'resultats.csv' a été généré avec succès.")

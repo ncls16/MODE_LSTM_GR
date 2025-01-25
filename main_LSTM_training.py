@@ -27,7 +27,7 @@ nom = 'Loic' # Fabio, Emma, Nicolas, Loic
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 
 #(une ligne par combinaison BV-seq_len sur fichier sortie)
-list_seq_len = [90] # [7, 15, 30]
+list_seq_len = [7, 15, 30, 90]
 loss_fonctions = ['MAE', 'NSE']
 
 

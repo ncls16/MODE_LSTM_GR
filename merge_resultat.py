@@ -89,7 +89,7 @@ df_result['training_time_norm_LSTM'] = (df_result['epoch_LSTM'] * min_time_per_e
 code_BV = df_result['BV_LSTM'].unique()
 for code in code_BV:
     MAE = df_result.loc[df_result['BV_LSTM'] == code,['seq_len_LSTM', 'MAE_val_LSTM']] 
-    MAE_max_seq_len = MAE.loc[MAE['MAE_val_LSTM'].idxmax(), 'seq_len_LSTM']
+    MAE_max_seq_len = MAE.loc[MAE['MAE_val_LSTM'].idxmin(), 'seq_len_LSTM']
     df_result.loc[(df_result['BV_LSTM'] == code) & (df_result['seq_len_LSTM'] == MAE_max_seq_len),'best_MAE_val_LSTM'] = True
 
     NSE = df_result.loc[df_result['BV_LSTM'] == code,['seq_len_LSTM', 'NSE_val_LSTM']]

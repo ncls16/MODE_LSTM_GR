@@ -2,7 +2,8 @@ import pandas as pd
 import os
 import numpy as np
 
-
+# silence la deprecation warning (.fill* sont dépréciés)
+pd.set_option('future.no_silent_downcasting', True)
 ####################################################
 # --------------- Entrées (modififiable) -----------
 dir_proj = os.path.normpath(os.getcwd()) 

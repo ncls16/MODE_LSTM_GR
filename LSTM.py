@@ -214,24 +214,29 @@ class LSTM():
             # ------------------- training ---------------------
             train_loss   = train_epoch(self.mymodel, optimizer, self.train_Loader, loss_func, i_epoch+1, self.device)
             obs_, preds_ = eval_model(self.mymodel, self.train_Loader, self.device)
+            obs_, preds_ = obs_.to(self.device), preds_.to(self.device)
             train_loss_  = loss_func(obs_, preds_).item()
             
             # scores
-            MAE_train = MAE(obs_.numpy().flatten(), preds_.numpy().flatten())
-            NSE_train = NSE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            obs_flat = obs_.cpu().numpy().flatten()
+            preds_flat = preds_.cpu().numpy().flatten()
+            MAE_train = MAE(obs_flat, preds_flat)
+            NSE_train = NSE(obs_flat, preds_flat)
             self.dic_resultats['NSE_train'] = NSE_train
             self.dic_resultats['MAE_train'] = MAE_train
             
             
             # -------------------- validation -------------------
             obs_, preds_ = eval_model(self.mymodel, self.val_Loader, self.device)
+            obs_flat = obs_.cpu().numpy().flatten()
+            preds_flat = preds_.cpu().numpy().flatten()
 
             # scores
-            val_mse      = np.mean((obs_.numpy().flatten() - preds_.numpy().flatten())**2)
+            val_mse      = np.mean((obs_flat - preds_flat)**2)
             val_mse_list.append(val_mse)    
                     
-            MAE_val = MAE(obs_.numpy().flatten(), preds_.numpy().flatten())
-            NSE_val = NSE(obs_.numpy().flatten(), preds_.numpy().flatten())
+            MAE_val = MAE(obs_flat, preds_flat)
+            NSE_val = NSE(obs_flat, preds_flat)
             self.dic_resultats['NSE_val'] = NSE_val
             self.dic_resultats['MAE_val'] = MAE_val
             
@@ -261,7 +266,7 @@ class LSTM():
     def test_model(self):
         # LSTM
         obs_t, preds_lstm = eval_model(self.mymodel, self.test_Loader, self.device)
-        obs_t, preds_lstm = obs_t.numpy().flatten(), preds_lstm.numpy().flatten()
+        obs_t, preds_lstm = obs_t.cpu().numpy().flatten(), preds_lstm.cpu().numpy().flatten()
 
         # # Save obs_t to a file
         # obs_file = os.path.join(dir_data, 'obs_t.csv')

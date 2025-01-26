@@ -22,7 +22,7 @@ print(msg0)
 ####################################################
 # --------------- Entrées (modififiable) -----------
 
-nom = 'Loic' # Fabio, Emma, Nicolas, Loic
+nom = 'Nicolas' # Fabio, Emma, Nicolas, Loic
 
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 
@@ -52,7 +52,7 @@ print('fichier_resultat:', fichier_resultat)
 #####################################################
 print(msg0)
 
-
+time_init = time.time()
 print('Début du traitement à :', time.ctime())
 
 
@@ -116,3 +116,6 @@ if True :
     df = pd.read_csv(fichier_resultat)
     df.drop_duplicates(subset=['seq_len', 'BV', 'loss_fonction'], inplace=True)
     df.to_csv(fichier_resultat, index=False)
+
+time_end = time.time()
+print("duration in HMS format : ", time.strftime("%H:%M:%S", time.gmtime(time_end - time_init)))

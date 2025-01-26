@@ -32,15 +32,16 @@ resultats = os.listdir(dir_results)
 # Récupération données LSTM
 df_LSTM = pd.DataFrame()
 resultats = os.listdir(dir_results)
+colonnes_a_lire = ["BV", "seq_len", "ti_train", "tf_train", "ti_test", "tf_test", "NSE_train", "MAE_train", "NSE_val", "MAE_val", "NSE_test", "MAE_test", "training_finished","epoch","loss_fonction","training_time","nom"]
 print('fichiers résultats : ', resultats)
 for file in resultats :
     if 'LSTM' in file:
+        print('file : ',file)
         file_path = os.path.join(dir_results, file)
-        df_temp = pd.read_csv(file_path)
+        df_temp = pd.read_csv(file_path, usecols=colonnes_a_lire)
         df_LSTM = pd.concat([df_LSTM, df_temp], ignore_index=True)
-
 df_LSTM = df_LSTM.add_suffix('_LSTM')
-
+print('df_LSTM \n : ',df_LSTM)
 
 # # ----------------------Merge des données---------------------
 # merge LSTM + GR4J
@@ -50,7 +51,7 @@ df_result = pd.merge(df_LSTM, df_GR4J, how = 'left', left_on='BV_LSTM', right_on
 df_result = pd.merge(df_result, df_stat, how = 'left', left_on='BV_LSTM', right_on='BV')
 
 print('df_result.shape : ',df_result.shape)
-
+print(df_result.head())
 
 
 
@@ -79,9 +80,7 @@ min_time_per_epoch_value = mean_time_per_epochs_ref.min() #moyenne temps pas epo
 #     min_training_time_value / 
 #     df_result['nom_LSTM'].map(mean_training_times_ref)
 # )
-df_result['training_time_norm_LSTM'] = (
-    df_result['epoch_LSTM'] * min_time_per_epoch_value
-)
+df_result['training_time_norm_LSTM'] = (df_result['epoch_LSTM'] * min_time_per_epoch_value)
 
 
 

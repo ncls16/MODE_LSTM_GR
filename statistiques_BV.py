@@ -40,17 +40,18 @@ for i, file_cat in enumerate(ts_files):
     data_cat, input_feat, output_feat = read_data(dir_data, file_cat)
     
     df_stats.loc[i, 'BV'] = file_cat[0:8]
-    df_stats.loc[i, 'mean_precipitation'] = data_cat['precipitation'].mean()
-    df_stats.loc[i, 'min_precipitation'] = data_cat['precipitation'].min()
-    df_stats.loc[i, 'max_precipitation'] = data_cat['precipitation'].max()
+    df_stats.loc[i, 'mean_precip'] = data_cat['precipitation'].mean()
+    df_stats.loc[i, 'min_precip'] = data_cat['precipitation'].min()
+    df_stats.loc[i, 'max_precip'] = data_cat['precipitation'].max()
 
-    df_stats.loc[i, 'mean_evapotranspiration'] = data_cat['evapotranspiration'].mean()
-    df_stats.loc[i, 'min_evapotranspiration'] = data_cat['evapotranspiration'].min()
-    df_stats.loc[i, 'max_evapotranspiration'] = data_cat['evapotranspiration'].max()
+    df_stats.loc[i, 'mean_ETP'] = data_cat['evapotranspiration'].mean()
+    df_stats.loc[i, 'min_ETP'] = data_cat['evapotranspiration'].min()
+    df_stats.loc[i, 'max_ETP'] = data_cat['evapotranspiration'].max()
 
     df_stats.loc[i, 'mean_flow_mm'] = data_cat['flow_mm'].mean()
     df_stats.loc[i, 'min_flow_mm'] = data_cat['flow_mm'].min()
     df_stats.loc[i, 'max_flow_mm'] = data_cat['flow_mm'].max()
 
+## save the statistics
 df_stats.to_csv(dir_resultats + "/statistiques.csv", index=False)
 print("Le fichier 'statistiques.csv' a été généré avec succès.")

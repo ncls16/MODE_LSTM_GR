@@ -209,14 +209,14 @@ def plot_neige(df):
     neige, ax = plt.subplots(figsize=fig_size)
     neige.suptitle('Répartition de la neige')
     ax.set_ylabel('Nombre de BV')
-    ax.set_xlabel('Importance de la neige')
+    ax.set_xlabel('Importance de la neige (%)')
     ax.hist(df.loc[df['seq_len_LSTM'] == 7, 'NEI_F'], bins=binss)
     neige.savefig(os.path.join(dir_plots, 'neige_population.png'))
 
     mae, ax1 = plt.subplots(figsize=fig_size)
     mae.suptitle('MAE en fonction de l\'importance de la neige')
     ax1.set_ylabel('MAE')
-    ax1.set_xlabel('Importance de la neige')
+    ax1.set_xlabel('Importance de la neige (%)')
     ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'NEI_F'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], label='LSTM', color='red')
     ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'NEI_F'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_GR4J'], label='GR4J', color='blue')
     ax1.legend()
@@ -226,7 +226,7 @@ def plot_neige(df):
     nse, ax2 = plt.subplots(figsize=fig_size)
     nse.suptitle('NSE en fonction de l\'importance de la neige')
     ax2.set_ylabel('NSE')
-    ax2.set_xlabel('Importance de la neige')
+    ax2.set_xlabel('Importance de la neige (%)')
     ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'NEI_F'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_LSTM'], label='LSTM', color='red')
     ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'NEI_F'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_GR4J'], label='GR4J', color='blue')
     ax2.legend()
@@ -234,6 +234,74 @@ def plot_neige(df):
     nse.savefig(os.path.join(dir_plots, 'neige_NSE.png'))
 
     plt.close(neige)
+    plt.close(mae)
+    plt.close(nse)
+
+# %% ETP
+def plot_etp(df):
+    """Plot la répartition de l'etp et la MAE/NSE en fonction de l'etp"""
+    etp, ax = plt.subplots(figsize=fig_size)
+    etp.suptitle('Répartition de l\'ETP')
+    ax.set_ylabel('Nombre de BV')
+    ax.set_xlabel('ETP (mm)')
+    ax.hist(df.loc[df['best_MAE_val_LSTM'] == 7, 'ETPm'], bins=binss)
+    etp.savefig(os.path.join(dir_plots, 'etp_population.png'))
+
+    mae, ax1 = plt.subplots(figsize=fig_size)
+    mae.suptitle('MAE en fonction de l\'ETP')
+    ax1.set_ylabel('MAE')
+    ax1.set_xlabel('ETP (mm)')
+    ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'ETPm'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], label='LSTM', color='red')
+    ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'ETPm'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_GR4J'], label='GR4J', color='blue')
+    ax1.legend()
+    ax1.grid(True)
+    mae.savefig(os.path.join(dir_plots, 'etp_MAE.png'))
+
+    nse, ax2 = plt.subplots(figsize=fig_size)
+    nse.suptitle('NSE en fonction de l\'ETP')
+    ax2.set_ylabel('NSE')
+    ax2.set_xlabel('ETP (mm)')
+    ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'ETPm'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_LSTM'], label='LSTM', color='red')
+    ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'ETPm'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_GR4J'], label='GR4J', color='blue')
+    ax2.legend()
+    ax2.grid(True)
+    nse.savefig(os.path.join(dir_plots, 'etp_NSE.png'))
+
+    plt.close(etp)
+    plt.close(mae)
+    plt.close(nse)
+
+# %%% plot pluie
+def plot_pluie(df):
+    """Plot la répartition de la pluie et la MAE/NSE en fonction de la pluie"""
+    pluie, ax = plt.subplots(figsize=fig_size)
+    pluie.suptitle('Répartition de la pluie')
+    ax.set_ylabel('Nombre de BV')
+    ax.set_xlabel('Pluie (mm)')
+    ax.hist(df.loc[df['seq_len_LSTM'] == 7, 'Pm'], bins=binss)
+    pluie.savefig(os.path.join(dir_plots, 'pluie_population.png'))
+
+    mae, ax1 = plt.subplots(figsize=fig_size)
+    mae.suptitle('MAE en fonction de la pluie')
+    ax1.set_ylabel('MAE')
+    ax1.set_xlabel('Pluie (mm)')
+    ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'Pm'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], label='LSTM', color='red')
+    ax1.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'Pm'], df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_GR4J'], label='GR4J', color='blue')
+    ax1.legend()
+    ax1.grid(True)
+    mae.savefig(os.path.join(dir_plots, 'pluie_MAE.png'))
+
+    nse, ax2 = plt.subplots(figsize=fig_size)
+    nse.suptitle('NSE en fonction de la pluie')
+    ax2.set_ylabel('NSE')
+    ax2.set_xlabel('Pluie (mm)')
+    ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'Pm'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_LSTM'], label='LSTM', color='red')
+    ax2.scatter(df.loc[df['best_NSE_val_LSTM'] == True, 'Pm'], df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_GR4J'], label='GR4J', color='blue')
+    ax2.legend()
+    ax2.grid(True)
+    nse.savefig(os.path.join(dir_plots, 'pluie_NSE.png'))
+
+    plt.close(pluie)
     plt.close(mae)
     plt.close(nse)
 
@@ -320,6 +388,22 @@ def plot_performance(df):
     df['surface_group'] = pd.qcut(df['AREA_SQKM_'], len(labelss), labels=labelss)
     plot_boxplot(df, 'surface_group', 'Surface', labelss)
 
+    # Group by neige
+    df['neige_group'] = pd.qcut(df['NEI_F'], len(labelss), labels=labelss)
+    plot_boxplot(df, 'neige_group', 'Neige', labelss)
+
+    # Group by etp
+    df['etp_group'] = pd.qcut(df['ETPm'], len(labelss), labels=labelss)
+    plot_boxplot(df, 'etp_group', 'ETP', labelss)
+
+    # Group by pluie
+    df['pluie_group'] = pd.qcut(df['Pm'], len(labelss), labels=labelss)
+    plot_boxplot(df, 'pluie_group', 'Pluie', labelss)
+
+    # Group by ruissellement
+    df['ruissellement_group'] = pd.qcut(df['mean_flow_mm'] / df['mean_precip'], len(labelss), labels=labelss)
+    plot_boxplot(df, 'ruissellement_group', 'Ruissellement', labelss)
+
 def plot_boxplot(df, group_col, group_name, labels):
     """Plot des boites à moustaches pour les groupes définis"""
     
@@ -364,7 +448,13 @@ def plot_boxplot(df, group_col, group_name, labels):
 
 
 def boxplot_mae_nse(df):
-    return True
+    """Plot des boites à moustaches pour les MAE et NSE"""
+    mae, ax1 = plt.subplots(figsize=(10, 6))
+    mae.suptitle('MAE en fonction de l\'optimisation des MAE et NSE')
+    ax1.set_ylabel('MAE')
+    ax1.boxplot(df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[1], tick_labels=['MAE'])
+    ax1.boxplot(df.loc[df['best_NSE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[2], tick_labels=['NSE'])
+    mae.savefig(os.path.join(dir_plots, 'boxplot_MAE_NSE.png'))
 
 
 # Plot 3D MAE/NSE en fonction de l'aridité, urbanisation
@@ -392,8 +482,17 @@ def plot_3D(df):
 
     plt.close(fig)
 
-
 # trier par Q_m, seq_len, NEI_F, aridite(fait), ETPm, urbanisation, Pm, surface(fait)
+
+# %% Affichage des données
+def affichage_debit_pluie(df):
+    return True
+
+def affichage_debit_aridite(df):
+    return True
+
+def affichage_debit_etp(df):
+    return True
 
 # %% Main
 if __name__ == '__main__':
@@ -404,8 +503,11 @@ if __name__ == '__main__':
     plot_aridite(df)
     plot_debit(df)
     plot_neige(df)
+    plot_etp(df)
+    plot_pluie(df)
     plot_urbanisation(df)
     plot_performance(df)
+    boxplot_mae_nse(df)
     plot_3D(df)
     print(f'Plots sauvegardés dans le dossier plots : {dir_plots}')
 

@@ -22,7 +22,7 @@ print(msg0)
 ####################################################
 # --------------- Entrées (modififiable) -----------
 
-nom = 'Nicolas' # Fabio, Emma, Nicolas, Loic
+nom = 'Fabio'
 
 
 # pour chaque BV, les "seq_len" suivants seront entrainés 

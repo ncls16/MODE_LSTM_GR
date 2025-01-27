@@ -73,7 +73,8 @@ def plot_moustaches(df):
     plt.close(mae)
     plt.close(nse)
 
-
+# log en nse
+# 
 
 # def plot_histogram(df):
 #     """Plot l'histogramme des MAE et NSE"""
@@ -99,6 +100,7 @@ def plot_surfaces(df):
     ax.set_ylabel('Nombre de BV')
     ax.set_xlabel('Surface (km²)')
     ax.hist(df.loc[df['seq_len_LSTM'] == 7, 'AREA_SQKM_'], bins=binss)
+    ax.set_xscale('log')
     repartition.savefig(os.path.join(dir_plots, 'surfaces_population.png'))
 
     mae, ax1 = plt.subplots(figsize=fig_size)
@@ -240,12 +242,13 @@ def plot_urbanisation(df):
     """Plot la répartition de l'urbanisation et la MAE/NSE en fonction de l'urbanisation"""
     keyword = 'DEV'  # 90,06,12
 
-    mean_urb = df.loc[df['seq_len_LSTM'] == 7, ['BV', 'DEV90', 'DEV00', 'DEV06', 'DEV12']].groupby('BV').mean()
+    mean_urb = df.loc[df['best_MAE_val_LSTM'] == True, ['BV', 'DEV90', 'DEV00', 'DEV06', 'DEV12']].groupby('BV').mean()
     repartition, ax = plt.subplots(figsize=fig_size)
     repartition.suptitle('Répartition de l\'urbanisation des BV')
     ax.set_ylabel('Nombre de BV')
     ax.set_xlabel('Urbanisation')
-    ax.hist(mean_urb, bins=binss)
+    ax.hist(mean_urb, bins=binss, label=['1990', '2000', '2006', '2012'])
+    ax.legend()
     repartition.savefig(os.path.join(dir_plots, 'urbanisation_population.png'))
 
     mae, ax1 = plt.subplots(figsize=fig_size)
@@ -358,6 +361,10 @@ def plot_boxplot(df, group_col, group_name, labels):
 
     plt.close(mae)
     plt.close(nse)
+
+
+def boxplot_mae_nse(df):
+    return True
 
 
 # Plot 3D MAE/NSE en fonction de l'aridité, urbanisation

@@ -1,9 +1,12 @@
 import pandas as pd
 import os
 import numpy as np
+import warnings
 
 # silence la deprecation warning (.fill* sont dépréciés)
 pd.set_option('future.no_silent_downcasting', True)
+warnings.filterwarnings("ignore", category=DeprecationWarning) #(l.74 : mean_time_per_epochs_ref)
+
 ####################################################
 # --------------- Entrées (modififiable) -----------
 dir_proj = os.path.normpath(os.getcwd()) 
@@ -65,9 +68,9 @@ print('noms = ',noms)
 liste_BV_reference = liste_BV_reference = [filename.split('_')[0] for filename in os.listdir(dir_data)[:5]]
 print('BV_reference : ',liste_BV_reference)
 df_result_ref = df_result[df_result['BV_LSTM'].isin(liste_BV_reference)]
-
 #df_result['training_time_LSTM'].groupby('nom_LSTM').mean()
 mean_training_times_ref = df_result_ref.groupby('nom_LSTM')['training_time_LSTM'].mean()
+# mean_time_per_epochs_ref = df_result_ref.groupby('nom_LSTM', group_keys=False).apply(lambda x: (x['training_time_LSTM'] / x['epoch_LSTM']).mean())
 mean_time_per_epochs_ref = df_result_ref.groupby('nom_LSTM').apply(lambda x: (x['training_time_LSTM'] / x['epoch_LSTM']).mean())
 # min_training_time_name = mean_training_times_ref.idxmin() #personne qui a la moyenne d'entrainement la plus faible
 # min_training_time_value = mean_training_times_ref.min()

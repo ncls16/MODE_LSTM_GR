@@ -404,24 +404,76 @@ def plot_performance(df):
     df['ruissellement_group'] = pd.qcut(df['mean_flow_mm'] / df['mean_precip'], len(labelss), labels=labelss)
     plot_boxplot(df, 'ruissellement_group', 'Ruissellement', labelss)
 
-def plot_boxplot(df, group_col, group_name, labels):
-    """Plot des boites à moustaches pour les groupes définis"""
+# def plot_boxplot(df, group_col, group_name, labels):
+#     """Plot des boites à moustaches pour les groupes définis"""
     
+#     # Création du premier plot pour MAE
+#     mae, ax1 = plt.subplots(figsize=(10, 6))
+#     mae.suptitle(f'MAE en fonction de {group_name}')
+#     ax1.set_ylabel('MAE')
+    
+#     pos = 1
+#     for type in labels:
+#         if type !=labels[-1]:
+#             ax1.axvline(x=pos + 0.5, color='grey', linestyle='--')
+
+#         data1 = df.loc[df[group_col] == type, 'MAE_test_LSTM']
+#         ax1.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
+#         data2 = df.loc[df[group_col] == type, 'MAE_test_GR4J']
+#         ax1.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
+#         pos += 1
+
+#     mae.savefig(os.path.join(dir_plots, f'boxplot_MAE_{group_name}.png'))
+
+#     # Création du deuxième plot pour NSE
+#     nse, ax2 = plt.subplots(figsize=(10, 6))
+#     nse.suptitle(f'NSE en fonction de {group_name}')
+#     ax2.set_ylabel('NSE')
+    
+#     pos = 1
+#     for type in labels:
+#         if type !=labels[-1]:
+#             ax2.axvline(x=pos + 0.5, color='grey', linestyle='--')
+
+#         data1 = df.loc[df[group_col] == type, 'NSE_test_LSTM']
+#         ax2.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
+#         data2 = df.loc[df[group_col] == type, 'NSE_test_GR4J']
+#         ax2.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
+#         pos += 1
+
+#     nse.savefig(os.path.join(dir_plots, f'boxplot_NSE_{group_name}.png'))
+
+#     plt.close(mae)
+#     plt.close(nse)
+
+# import os
+# import matplotlib.pyplot as plt
+
+def plot_boxplot(df, group_col, group_name, labels):
+    """Plot des boîtes à moustaches pour les groupes définis"""
+
     # Création du premier plot pour MAE
     mae, ax1 = plt.subplots(figsize=(10, 6))
     mae.suptitle(f'MAE en fonction de {group_name}')
     ax1.set_ylabel('MAE')
-    
+
     pos = 1
+    group_positions = []  # Stocker les positions pour les labels de groupe
     for type in labels:
-        if type !=labels[-1]:
+        if type != labels[-1]:
             ax1.axvline(x=pos + 0.5, color='grey', linestyle='--')
 
         data1 = df.loc[df[group_col] == type, 'MAE_test_LSTM']
-        ax1.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
+        ax1.boxplot(data1, positions=[pos - 0.2], widths=0.3, tick_labels=['LSTM'])
         data2 = df.loc[df[group_col] == type, 'MAE_test_GR4J']
-        ax1.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
+        ax1.boxplot(data2, positions=[pos + 0.2], widths=0.3, tick_labels=['GR4J'])
+
+        group_positions.append(pos)  # Enregistrer la position pour le label du groupe
         pos += 1
+
+    # Ajouter les labels des groupes sous l'axe des x
+    for i, label in enumerate(labels):
+        ax1.text(group_positions[i], -0.2, f'{label} {group_name}', fontsize=12, ha='center', transform=ax1.transData)
 
     mae.savefig(os.path.join(dir_plots, f'boxplot_MAE_{group_name}.png'))
 
@@ -429,17 +481,24 @@ def plot_boxplot(df, group_col, group_name, labels):
     nse, ax2 = plt.subplots(figsize=(10, 6))
     nse.suptitle(f'NSE en fonction de {group_name}')
     ax2.set_ylabel('NSE')
-    
+
     pos = 1
+    group_positions = []  # Réinitialisation pour le second graphe
     for type in labels:
-        if type !=labels[-1]:
+        if type != labels[-1]:
             ax2.axvline(x=pos + 0.5, color='grey', linestyle='--')
 
         data1 = df.loc[df[group_col] == type, 'NSE_test_LSTM']
-        ax2.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
+        ax2.boxplot(data1, positions=[pos - 0.2], widths=0.3, tick_labels=['LSTM'])
         data2 = df.loc[df[group_col] == type, 'NSE_test_GR4J']
-        ax2.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
+        ax2.boxplot(data2, positions=[pos + 0.2], widths=0.3, tick_labels=['GR4J'])
+
+        group_positions.append(pos)
         pos += 1
+
+    # Ajouter les labels des groupes sous l'axe des x
+    for i, label in enumerate(labels):
+        ax2.text(group_positions[i], -0.2, f'{label} {group_name}', fontsize=12, ha='center', transform=ax1.transData)
 
     nse.savefig(os.path.join(dir_plots, f'boxplot_NSE_{group_name}.png'))
 

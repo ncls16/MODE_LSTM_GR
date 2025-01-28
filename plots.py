@@ -6,6 +6,14 @@ import os
 
 # %% Variables
 fig_size = (10, 5) # taille des figures
+plt.rcParams.update({'font.size': 15})
+plt.rcParams.update({'axes.labelsize': 15})
+plt.rcParams.update({'axes.titlesize': 15})
+plt.rcParams.update({'xtick.labelsize': 15})
+plt.rcParams.update({'ytick.labelsize': 15})
+plt.rcParams.update({'legend.fontsize': 12})
+fig_size = (15, 7)  # nouvelle taille des figures
+plt.rcParams['figure.figsize'] = fig_size
 binss = 20 # nombre de bins pour les histogrammes
 # dossier origine
 dir_proj = os.path.normpath(os.getcwd())
@@ -73,24 +81,7 @@ def plot_moustaches(df):
     plt.close(mae)
     plt.close(nse)
 
-# log en nse
-# 
 
-# def plot_histogram(df):
-#     """Plot l'histogramme des MAE et NSE"""
-#     """les best et ou seq_len a ajouter"""
-#     mean_time = df.groupby('seq_len')['training_time_LSTM'].mean()
-#     mean_mae = df.groupby('seq_len')['MAE_test_LSTM'].mean()
-#     mean_nse = df.groupby('seq_len')['NSE_test_LSTM'].mean()
-#     mean_time.append(df['training_time_GR4J'].mean())
-#     mean_mae.append(df['MAE_test_GR4J'].mean())
-#     mean_nse.append(df['NSE_test_GR4J'].mean())
-
-#     hist_time = plt.figure(figsize=(10, 5))
-#     hist_time.title('Temps de calcul moyen')
-#     hist_time.ylabel('Temps de calcul (s)')
-
-#     return(True)
 
 # %%% Surfaces
 def plot_surfaces(df):
@@ -173,7 +164,7 @@ def plot_debit(df):
     debit, ax = plt.subplots(figsize=(10,6))
     debit.suptitle('Répartition du débit')
     ax.set_ylabel('Nombre de BV')
-    ax.set_xlabel('Coefficient de Ruissellement, $\dfrac{Débit_m}{Précipitations_m}$')
+    ax.set_xlabel('Coefficient de Ruissellement, $Débit_m/Précipitations_m$', fontsize=12)
     ax.hist(data_ax, bins=binss)
     # ax.hist(df.loc[df['seq_len_LSTM'] == 7, 'mean_flow_mm'], bins=binss)
     debit.savefig(os.path.join(dir_plots, 'ruissellement_population.png'))
@@ -181,7 +172,7 @@ def plot_debit(df):
     mae, ax1 = plt.subplots(figsize=(10,6))
     mae.suptitle('MAE en fonction du ruissellement')
     ax1.set_ylabel('MAE')
-    ax1.set_xlabel('Coefficient de ruissellement, $\dfrac{Débit_m}{Précipitations_m}$')
+    ax1.set_xlabel('Coefficient de ruissellement, $Débit_m/Précipitations_m$', fontsize=12)
     ax1.scatter(data_ax, df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], label='LSTM', color='red')
     ax1.scatter(data_ax, df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_GR4J'], label='GR4J', color='blue')
     ax1.legend()
@@ -192,7 +183,7 @@ def plot_debit(df):
     nse, ax2 = plt.subplots(figsize=(10,6))
     nse.suptitle('NSE en fonction du débit')
     ax2.set_ylabel('NSE')
-    ax2.set_xlabel('Coefficient de ruissellement, $\dfrac{Débit_m}{Précipitations_m}$')
+    ax2.set_xlabel('Coefficient de ruissellement, $Débit_m/Précipitations_m', fontsize=12)
     ax2.scatter(data_ax, df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_LSTM'], label='LSTM', color='red')
     ax2.scatter(data_ax, df.loc[df['best_NSE_val_LSTM'] == True, 'NSE_test_GR4J'], label='GR4J', color='blue')
     ax2.legend()
@@ -565,7 +556,7 @@ def affichage_debit_aridite(df):
     data = df.loc[df['best_MAE_val_LSTM'] == True, 'mean_flow_mm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
     ax.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip'], data, c='red', label='Débit')
     ax.set_xlabel('Aridité')
-    ax.set_ylabel('\dfrac{Débit}{Précipitations}')
+    ax.set_ylabel('$\dfrac{Débit}{Précipitations}$')
     ax.legend()
     ax.set_title('Débit en fonction de l\'aridité')
     plt.savefig(os.path.join(dir_plots, 'debit_aridite.png'))
@@ -576,8 +567,8 @@ def affichage_debit_etp(df):
     data = df.loc[df['best_MAE_val_LSTM'] == True, 'mean_flow_mm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
     data_x = df.loc[df['best_MAE_val_LSTM'] == True, 'ETPm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
     ax.scatter(data_x, data, c='red', label='Débit')
-    ax.set_xlabel('\dfrac{ETP}{Précipitations}')
-    ax.set_ylabel('\dfrac{Débit}{Précipitations}')
+    ax.set_xlabel('ETP/Précipitations')
+    ax.set_ylabel('$\dfrac{Débit}{Précipitations}$')
     ax.legend()
     ax.set_title('Débit en fonction de l\'ETP')
     plt.savefig(os.path.join(dir_plots, 'debit_etp.png'))

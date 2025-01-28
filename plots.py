@@ -377,32 +377,46 @@ def plot_performance(df):
     """Plot la performance en NSE et MAE en fonction des aridités, urbanisations, surfaces"""
     labelss = ['low', 'medium', 'high']
     # Group by aridite
-    df['arid_group'] = pd.qcut(df['Arid'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'arid_group', 'Aridité', labelss)
+    def cut_into_groups(df, column, labels):
+        min_val = df[column].min()
+        max_val = df[column].max()
+        bins = np.linspace(min_val, max_val, len(labels) + 1)
+        df[f'{column}_group'] = pd.cut(df[column], bins=bins, labels=labels, include_lowest=True)
+        return df, f'{column}_group'
+
+    df, name = cut_into_groups(df, 'Arid', labelss)
+    # df['arid_group'] = pd.qcut(df['Arid'], len(labelss), labels=labelss)
+    plot_boxplot(df, 'Arid_group', name, labelss)
 
     # Group by urbanisation
-    df['urban_group'] = pd.qcut(df['DEV12'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'urban_group', 'Urbanisation', labelss)
+    df, name = cut_into_groups(df, 'DEV12', labelss)
+    # df['urban_group'] = pd.qcut(df['DEV12'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'Urbanisation', labelss)
 
     # Group by surface
-    df['surface_group'] = pd.qcut(df['AREA_SQKM_'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'surface_group', 'Surface', labelss)
+    df, name = cut_into_groups(df, 'AREA_SQKM_', labelss)
+    # df['surface_group'] = pd.qcut(df['AREA_SQKM_'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'Surface', labelss)
 
     # Group by neige
-    df['neige_group'] = pd.qcut(df['NEI_F'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'neige_group', 'Neige', labelss)
+    df, name = cut_into_groups(df, 'NEI_F', labelss)
+    # df['neige_group'] = pd.qcut(df['NEI_F'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'Neige', labelss)
 
     # Group by etp
-    df['etp_group'] = pd.qcut(df['ETPm'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'etp_group', 'ETP', labelss)
+    df, name = cut_into_groups(df, 'ETPm', labelss)
+    # df['etp_group'] = pd.qcut(df['ETPm'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'ETP', labelss)
 
     # Group by pluie
-    df['pluie_group'] = pd.qcut(df['Pm'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'pluie_group', 'Pluie', labelss)
+    df, name = cut_into_groups(df, 'Pm', labelss)
+    # df['pluie_group'] = pd.qcut(df['Pm'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'Pluie', labelss)
 
     # Group by ruissellement
-    df['ruissellement_group'] = pd.qcut(df['mean_flow_mm'] / df['mean_precip'], len(labelss), labels=labelss)
-    plot_boxplot(df, 'ruissellement_group', 'Ruissellement', labelss)
+    df, name = cut_into_groups(df, 'mean_flow_mm', labelss)
+    # df['ruissellement_group'] = pd.qcut(df['mean_flow_mm'] / df['mean_precip'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, 'Ruissellement', labelss)
 
 
 def plot_boxplot(df, group_col, group_name, labels):
@@ -461,7 +475,6 @@ def plot_boxplot(df, group_col, group_name, labels):
     plt.close(mae)
     plt.close(nse)
 
-
 def boxplot_mae_nse(df):
     """Plot des boites à moustaches pour les MAE et NSE"""
     seq_lengths = df['seq_len_LSTM'].unique()
@@ -470,16 +483,43 @@ def boxplot_mae_nse(df):
     ax1.set_ylabel('MAE')
     for i, length in enumerate(seq_lengths):
         data = df.loc[df['seq_len_LSTM'] == length, ['MAE_test_LSTM','loss_fonction_LSTM']]
+
         data_bis = data.loc[df['loss_fonction_LSTM'] == 'MAE', 'MAE_test_LSTM']
         ax1.boxplot(data_bis, positions=[i], tick_labels=[f'MAE_{length}'])
 
         data_ter = data.loc[df['loss_fonction_LSTM'] == 'NSE', 'MAE_test_LSTM']
-        ax1.boxplot(data_ter, positions=[i+len(seq_lengths)+2], tick_labels=[f'NSE_{length}'])
+        ax1.boxplot(data_ter, positions=[i+len(seq_lengths)], tick_labels=[f'NSE_{length}'])
 
-    ax1.boxplot(df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[len(seq_lengths)], tick_labels=['MAE'])
-    ax1.boxplot(df.loc[df['best_NSE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[len(seq_lengths)+1], tick_labels=['NSE'])
-    ax1.axvline(x=len(seq_lengths) + 0.5, color='grey', linestyle='--')
+    ax1.axvline(x=len(seq_lengths) - 0.5, color='grey', linestyle='--')
     mae.savefig(os.path.join(dir_plots, 'boxplot_MAE_NSE.png'))
+
+    mae_best, ax2 = plt.subplots(figsize=(10, 6))
+    mae_best.suptitle('MAE en fonction de l\'optimisation des MAE et NSE')
+    ax2.set_ylabel('MAE')
+    ax2.boxplot(df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[0], tick_labels=['MAE'])
+    ax2.boxplot(df.loc[df['best_NSE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[1], tick_labels=['NSE'])
+    ax2.axvline(x= 0.5, color='grey', linestyle='--')
+    mae_best.savefig(os.path.join(dir_plots, 'boxplot_MAE_NSE_best.png'))
+
+    # time evaluation
+    timed, ax = plt.subplots(figsize=(10, 6))
+    timed.suptitle('Temps de calcul en fonction de seq_len et loss function')
+    ax.set_ylabel('Temps de calcul (s)')
+    for i, length in enumerate(seq_lengths):
+        data = df.loc[df['seq_len_LSTM'] == length, ['training_time_norm_LSTM','loss_fonction_LSTM']]
+
+        data_bis = data.loc[df['loss_fonction_LSTM'] == 'MAE', 'training_time_norm_LSTM']
+        ax.boxplot(data_bis, positions=[i], tick_labels=[f'MAE_{length}'])
+
+        data_ter = data.loc[df['loss_fonction_LSTM'] == 'NSE', 'training_time_norm_LSTM']
+        ax.boxplot(data_ter, positions=[i+len(seq_lengths)], tick_labels=[f'NSE_{length}'])
+
+    ax.axvline(x=len(seq_lengths) - 0.5, color='grey', linestyle='--')
+    timed.savefig(os.path.join(dir_plots, 'boxplot_time_MAE_NSE.png'))
+    ax.set_yscale('log')
+    plt.close(mae)
+    plt.close(mae_best)
+    plt.close(timed)
 
 # Plot 3D MAE/NSE en fonction de l'aridité, urbanisation
 def plot_3D(df):

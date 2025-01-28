@@ -486,12 +486,37 @@ def plot_3D(df):
 
 # %% Affichage des données
 def affichage_debit_pluie(df):
-    return True
+    """fonction qui affiche la courbe des débits en fonction de la pluie"""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'Pm'], df.loc[df['best_MAE_val_LSTM'] == True, 'mean_flow_mm'], c='red', label='Débit')
+    ax.set_xlabel('Pluie (mm)')
+    ax.set_ylabel('Débit (mm)')
+    ax.legend()
+    ax.set_title('Débit en fonction de la pluie')
+    plt.savefig(os.path.join(dir_plots, 'debit_pluie.png'))
 
 def affichage_debit_aridite(df):
-    return True
+    """fonction qui affiche la courbe des débits/precipitation en fonction de l'aridité"""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    data = df.loc[df['best_MAE_val_LSTM'] == True, 'mean_flow_mm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
+    ax.scatter(df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip'], data, c='red', label='Débit')
+    ax.set_xlabel('Aridité')
+    ax.set_ylabel('\dfrac{Débit}{Précipitations}')
+    ax.legend()
+    ax.set_title('Débit en fonction de l\'aridité')
+    plt.savefig(os.path.join(dir_plots, 'debit_aridite.png'))
 
 def affichage_debit_etp(df):
+    """fonction qui affiche la courbe des débits/precipitation en fonction de l'ETP/precipitation"""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    data = df.loc[df['best_MAE_val_LSTM'] == True, 'mean_flow_mm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
+    data_x = df.loc[df['best_MAE_val_LSTM'] == True, 'ETPm'] / df.loc[df['best_MAE_val_LSTM'] == True, 'mean_precip']
+    ax.scatter(data_x, data, c='red', label='Débit')
+    ax.set_xlabel('\dfrac{ETP}{Précipitations}')
+    ax.set_ylabel('\dfrac{Débit}{Précipitations}')
+    ax.legend()
+    ax.set_title('Débit en fonction de l\'ETP')
+    plt.savefig(os.path.join(dir_plots, 'debit_etp.png'))
     return True
 
 # %% Main
@@ -508,6 +533,9 @@ if __name__ == '__main__':
     plot_urbanisation(df)
     plot_performance(df)
     boxplot_mae_nse(df)
+    affichage_debit_aridite(df)
+    affichage_debit_etp(df)
+    affichage_debit_pluie(df)
     plot_3D(df)
     print(f'Plots sauvegardés dans le dossier plots : {dir_plots}')
 

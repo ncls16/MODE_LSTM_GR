@@ -404,50 +404,6 @@ def plot_performance(df):
     df['ruissellement_group'] = pd.qcut(df['mean_flow_mm'] / df['mean_precip'], len(labelss), labels=labelss)
     plot_boxplot(df, 'ruissellement_group', 'Ruissellement', labelss)
 
-# def plot_boxplot(df, group_col, group_name, labels):
-#     """Plot des boites à moustaches pour les groupes définis"""
-    
-#     # Création du premier plot pour MAE
-#     mae, ax1 = plt.subplots(figsize=(10, 6))
-#     mae.suptitle(f'MAE en fonction de {group_name}')
-#     ax1.set_ylabel('MAE')
-    
-#     pos = 1
-#     for type in labels:
-#         if type !=labels[-1]:
-#             ax1.axvline(x=pos + 0.5, color='grey', linestyle='--')
-
-#         data1 = df.loc[df[group_col] == type, 'MAE_test_LSTM']
-#         ax1.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
-#         data2 = df.loc[df[group_col] == type, 'MAE_test_GR4J']
-#         ax1.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
-#         pos += 1
-
-#     mae.savefig(os.path.join(dir_plots, f'boxplot_MAE_{group_name}.png'))
-
-#     # Création du deuxième plot pour NSE
-#     nse, ax2 = plt.subplots(figsize=(10, 6))
-#     nse.suptitle(f'NSE en fonction de {group_name}')
-#     ax2.set_ylabel('NSE')
-    
-#     pos = 1
-#     for type in labels:
-#         if type !=labels[-1]:
-#             ax2.axvline(x=pos + 0.5, color='grey', linestyle='--')
-
-#         data1 = df.loc[df[group_col] == type, 'NSE_test_LSTM']
-#         ax2.boxplot(data1, positions=[pos - 0.2], tick_labels=['LSTM'])
-#         data2 = df.loc[df[group_col] == type, 'NSE_test_GR4J']
-#         ax2.boxplot(data2, positions=[pos + 0.2], tick_labels=['GR4J'])
-#         pos += 1
-
-#     nse.savefig(os.path.join(dir_plots, f'boxplot_NSE_{group_name}.png'))
-
-#     plt.close(mae)
-#     plt.close(nse)
-
-# import os
-# import matplotlib.pyplot as plt
 
 def plot_boxplot(df, group_col, group_name, labels):
     """Plot des boîtes à moustaches pour les groupes définis"""
@@ -508,13 +464,22 @@ def plot_boxplot(df, group_col, group_name, labels):
 
 def boxplot_mae_nse(df):
     """Plot des boites à moustaches pour les MAE et NSE"""
+    seq_lengths = df['seq_len_LSTM'].unique()
     mae, ax1 = plt.subplots(figsize=(10, 6))
     mae.suptitle('MAE en fonction de l\'optimisation des MAE et NSE')
     ax1.set_ylabel('MAE')
-    ax1.boxplot(df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[1], tick_labels=['MAE'])
-    ax1.boxplot(df.loc[df['best_NSE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[2], tick_labels=['NSE'])
-    mae.savefig(os.path.join(dir_plots, 'boxplot_MAE_NSE.png'))
+    for i, length in enumerate(seq_lengths):
+        data = df.loc[df['seq_len_LSTM'] == length, ['MAE_test_LSTM','loss_fonction_LSTM']]
+        data_bis = data.loc[df['loss_fonction_LSTM'] == 'MAE', 'MAE_test_LSTM']
+        ax1.boxplot(data_bis, positions=[i], tick_labels=[f'MAE_{length}'])
 
+        data_ter = data.loc[df['loss_fonction_LSTM'] == 'NSE', 'MAE_test_LSTM']
+        ax1.boxplot(data_ter, positions=[i+len(seq_lengths)+2], tick_labels=[f'NSE_{length}'])
+
+    ax1.boxplot(df.loc[df['best_MAE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[len(seq_lengths)], tick_labels=['MAE'])
+    ax1.boxplot(df.loc[df['best_NSE_val_LSTM'] == True, 'MAE_test_LSTM'], positions=[len(seq_lengths)+1], tick_labels=['NSE'])
+    ax1.axvline(x=len(seq_lengths) + 0.5, color='grey', linestyle='--')
+    mae.savefig(os.path.join(dir_plots, 'boxplot_MAE_NSE.png'))
 
 # Plot 3D MAE/NSE en fonction de l'aridité, urbanisation
 def plot_3D(df):

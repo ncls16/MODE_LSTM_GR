@@ -384,6 +384,11 @@ def plot_performance(df):
     # df['urban_group'] = pd.qcut(df['DEV12'], len(labelss), labels=labelss)
     plot_boxplot(df, name, 'Urbanisation', labelss)
 
+    df['urbanisation_rate'] = (df['DEV12'] - df['DEV90']) / (2012 - 1990)
+    df, name = cut_into_groups(df, 'urbanisation_rate', labelss)
+    # df['urban_rate_group'] = pd.qcut(df['urbanisation_rate'], len(labelss), labels=labelss)
+    plot_boxplot(df, name, '$V_{urb}$', labelss)
+
     # Group by surface
     df, name = cut_into_groups(df, 'AREA_SQKM_', labelss)
     # df['surface_group'] = pd.qcut(df['AREA_SQKM_'], len(labelss), labels=labelss)
